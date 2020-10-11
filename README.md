@@ -7,7 +7,7 @@ Perintis (an inaccurate translation of Vanguard) is a tool to help your track an
 1. Install [Pipenv](https://pypi.org/project/pipenv/).
 2. Run `pipenv install`.
 3. Copy `.env.example` to `.env` and `data/holdings.yaml.example` to `holding.yaml`.
-4. Run `pipenv run streamlit run`.
+4. Run `pipenv run streamlit run perintis.py`.
 
 ## In development
 
