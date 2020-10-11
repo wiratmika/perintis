@@ -1,0 +1,4 @@
+.DS_Store
+.env
+data/holdings.yaml
+.vscode/settings.json
