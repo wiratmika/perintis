@@ -48,7 +48,7 @@ This means you own BBRI stocks of 100 lots with purchase price of 3200, and 50 l
 If you don't own stocks previously or want to see a clean slate, just delete the list.
 """
 
-default_capital = int(os.getenv("DEFAULT_CAPITAL_AMOUNT"))
+default_capital = int(os.getenv("DEFAULT_CAPITAL_AMOUNT", 100000000))
 capital = streamlit.sidebar.number_input(
     "Your capital", value=default_capital, step=1000000
 )
