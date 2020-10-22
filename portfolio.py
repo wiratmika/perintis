@@ -11,17 +11,14 @@ def calculate(index: str, date, capital: int):
 
     data = []
     index_period = date.strftime("%Y-%m")
-
-    total_value = 0
-    for code, issuer in issuers.items():
-        price = issuer["prices"][date]
-        value = indices[index][index_period][code] * price
-        total_value += value
+    index_list = indices[index][index_period]
+    total_market_cap = get_total_market_cap(index_list)
 
     for code, issuer in issuers.items():
         price = issuer["prices"][date]
-        value = indices[index][index_period][code] * price
-        percentage = value / total_value
+        index_constituent = index_list[code]
+        market_cap = index_constituent[0] * index_constituent[1]
+        percentage = market_cap / total_market_cap
         weighted_value = percentage * capital
         shares = weighted_value / price
         lots = floor(shares / 100)
@@ -55,3 +52,13 @@ def calculate(index: str, date, capital: int):
         )
 
     return data
+
+
+def get_total_market_cap(index):
+    total_value = 0
+    for code, issuer in issuers.items():
+        index_constituent = index[code]
+        value = index_constituent[0] * index_constituent[1]
+        total_value += value
+
+    return total_value
