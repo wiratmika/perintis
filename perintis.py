@@ -57,7 +57,7 @@ date = streamlit.sidebar.selectbox("Price date", dates, index=len(dates) - 1)
 portfolio_result = calculate("IDX30", date, capital)
 
 hide_zero_diff = streamlit.sidebar.checkbox("Hide zero diff stocks")
-filtered_portfolio_result = filter(lambda x: x["Diff"] != 0, portfolio_result)
+buying_mode = streamlit.sidebar.checkbox("Buying mode")
 
 
 def difference_color(val):
@@ -72,22 +72,32 @@ def difference_color(val):
 
 currency_format = "Rp{:,.0f}"
 
-portfolio = (
-    pandas.DataFrame(filtered_portfolio_result if hide_zero_diff else portfolio_result)
-    .style.format(
-        {
-            "Price": "{:,}",
-            "Percentage": "{:.2%}",
-            "Ideal Value": currency_format,
-            "Expected Value": currency_format,
-            "Owned Value": currency_format,
-            "Diff Value": currency_format,
-            "Purchased Value": currency_format,
-            "Spent": currency_format,
-        }
-    )
-    .applymap(difference_color, subset=["Diff"])
+result_to_show = (
+    filter(lambda x: x["Diff"] != 0, portfolio_result)
+    if hide_zero_diff
+    else portfolio_result
 )
+
+if not buying_mode:
+    portfolio = (
+        pandas.DataFrame(result_to_show)
+        .style.format(
+            {
+                "Price": "{:,}",
+                "Percentage": "{:.2%}",
+                "Ideal Value": currency_format,
+                "Expected Value": currency_format,
+                "Owned Value": currency_format,
+                "Diff Value": currency_format,
+                "Purchased Value": currency_format,
+                "Spent": currency_format,
+            }
+        )
+        .applymap(difference_color, subset=["Diff"])
+    )
+else:
+    portfolio = pandas.DataFrame(result_to_show).loc[:, "Code":"Diff"]
+
 "## Portfolio"
 portfolio
 
