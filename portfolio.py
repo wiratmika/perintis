@@ -37,8 +37,8 @@ def calculate(index: str, date, capital: int):
             {
                 "Code": code,
                 "Price": price,
-                "Lots": lots,
                 "Diff": lots - owned,
+                "Lots": lots,
                 "Owned": owned,
                 "Name": issuer["name"],
                 "Percentage": percentage,
