@@ -41,12 +41,21 @@ def scrape_save(date, data):
 
 @streamlit.cache
 def scrape_stockbit(token: str, pin: str):
-    today = datetime.now().date().strftime("%Y-%m-%d")
-    url = f"https://api.stockbit.com/v2.4/trade/report/trade_activity?start=1970-01-01&end={today}"
     headers = {
         "x-pin": pin,
         "authorization": f"Bearer {token}",
     }
 
+    today = datetime.now().date().strftime("%Y-%m-%d")
+    url = f"https://api.stockbit.com/v2.4/trade/report/trade_activity?start=1970-01-01&end={today}"
     print("Calling Stockbit trade API...")
-    return requests.get(url, headers=headers).json()["data"]["result"]
+    trade = requests.get(url, headers=headers).json()["data"]["result"]
+
+    url = "https://api.stockbit.com/v2.4/trade/order?gtc=1"
+    print("Calling Stockbit order API...")
+    order = requests.get(url, headers=headers).json()["data"]
+
+    return {
+        "trade": trade,
+        "order": order,
+    }

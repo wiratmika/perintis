@@ -9,13 +9,20 @@ def get_holdings():
     data = scrape_stockbit(os.getenv("STOCKBIT_TOKEN"), os.getenv("STOCKBIT_PIN"))
     result = {}
 
-    for day in data:
+    for day in data["trade"]:
         for activity in day["activity"]:
             code = activity["symbol"]
             lot = int(activity["lot"].replace(".0", ""))
             price = int(activity["price"])
             transaction = (lot, price)
             result.setdefault(code, []).append(transaction)
+
+    for order in data["order"]:
+        code = order["symbol"]
+        lot = order["order_total"]
+        price = order["price_order"]
+        transaction = (lot, price)
+        result.setdefault(code, []).append(transaction)
 
     return result
 
