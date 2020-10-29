@@ -115,7 +115,10 @@ additional_capital *= 1.00145
 f"Additional capital required (excluding sales, including commission): **Rp{ceil(additional_capital):,}**"
 
 if streamlit.button("Purchase according to recommendation"):
-    if purchase_holdings(non_zero_diff_result):
+    result = purchase_holdings(non_zero_diff_result)
+    if result:
+        for i in result:
+            i
         "Purchase data sucessfully saved! Please refresh this page."
     else:
         "Oops something happened, please check console."
