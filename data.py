@@ -6,9 +6,6 @@ with open("data/issuers.yaml", "r") as infile:
 with open("data/indices.yaml", "r") as infile:
     indices = yaml.safe_load(infile)
 
-with open("data/holdings.yaml", "r") as infile:
-    holdings = yaml.safe_load(infile)
-
 with open("data/dates.yaml", "r") as infile:
     dates = yaml.safe_load(infile)
 

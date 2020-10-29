@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 import streamlit
 
@@ -35,3 +37,16 @@ def scrape_save(date, data):
         write("issuers", issuers)
 
     return True
+
+
+@streamlit.cache
+def scrape_stockbit(token: str, pin: str):
+    today = datetime.now().date().strftime("%Y-%m-%d")
+    url = f"https://api.stockbit.com/v2.4/trade/report/trade_activity?start=1970-01-01&end={today}"
+    headers = {
+        "x-pin": pin,
+        "authorization": f"Bearer {token}",
+    }
+
+    print("Calling Stockbit trade API...")
+    return requests.get(url, headers=headers).json()["data"]["result"]

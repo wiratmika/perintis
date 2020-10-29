@@ -1,15 +1,29 @@
+import os
 from math import floor
 
-from data import holdings, indices, issuers
+from data import indices, issuers
+from scraper import scrape_stockbit
+
+
+def get_holdings():
+    data = scrape_stockbit(os.getenv("STOCKBIT_TOKEN"), os.getenv("STOCKBIT_PIN"))
+    result = {}
+
+    for day in data:
+        for activity in day["activity"]:
+            code = activity["symbol"]
+            lot = int(activity["lot"].replace(".0", ""))
+            price = int(activity["price"])
+            transaction = (lot, price)
+            result.setdefault(code, []).append(transaction)
+
+    return result
 
 
 def calculate(index: str, date, capital: int):
-    if holdings:
-        owned_holdings = holdings
-    else:
-        owned_holdings = {}
+    holdings = get_holdings()
 
-    data = []
+    result = []
     index_period = date.strftime("%Y-%m")
     index_list = indices[index][index_period]
     total_market_cap = get_total_market_cap(index_list)
@@ -22,7 +36,7 @@ def calculate(index: str, date, capital: int):
         weighted_value = percentage * capital
         shares = weighted_value / price
         lots = floor(shares / 100)
-        holding = owned_holdings.get(code, [])
+        holding = holdings.get(code, [])
         owned = 0
         owned_value = 0
         purchased_value = 0
@@ -33,7 +47,7 @@ def calculate(index: str, date, capital: int):
 
         expected_value = lots * 100 * price
 
-        data.append(
+        result.append(
             {
                 "Code": code,
                 "Price": price,
@@ -51,7 +65,7 @@ def calculate(index: str, date, capital: int):
             }
         )
 
-    return data
+    return result
 
 
 def get_total_market_cap(index):
