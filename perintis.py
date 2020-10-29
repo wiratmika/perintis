@@ -17,36 +17,13 @@ load_dotenv()
 
 """
 ## How to use
-First, fetch latest stock prices using scraper below and click "Save scrape result".
+1. Fetch latest stock prices using scraper below and press "Save scrape result".
+2. Fine-tune "Your capital" input on the sidebar until "Additional capital required" is near your intended value of stock purchases.
+3. Top-up your brokerage account with at least "Additional capital required" amount and some extra buffer for safety.
+4. Press "Purchase according to recommendation" and let the magic works.
+5. Carry on with your life until the next time you want to purchase stocks again; the beauty of index investing is that you don't have to think nor monitor about it, unlike active investing.
 
-### First time stock buyer
-1. Fill `DEFAULT_CAPITAL_AMOUNT` in `.env` to your expected capital.
-2. You can fine-tune it in the "Your capital" input on the sidebar.
-3. Reset your holdings in `holdings.yaml` (see below).
-4. Top-up your brokerage account with at least "Additional capital required" amount and some extra buffer.
-5. Purchase stocks based on the price and lots calculated in the portfolio table.
-6. Carry on with your life until the next time you want to purchase stocks again. The beauty of index investing is that you don't have to think nor monitor about it, unlike active investing.
-
-### Already own stocks before?
-1. Enter your owned stocks in `holdings.yaml`.
-2. Set `DEFAULT_CAPITAL_AMOUNT` or "Your capital" to your liking. If you want to purchase more stocks, increase the capital amount until "Additional capital required" is greater than 0.
-3. You can then either only purchase stocks whose diff is greater than 0, or also adjust your holdings by sell stocks which price had gone up from your average purchase prices, indicated by negative diff.
-
-### Filling holdings.yaml
-`holdings.yaml` contains key-value pairs of stock ticker code and the list of purchase history. For example:
-
-```
----
-BBRI:
-  - - 100
-    - 3200
-  - - 50
-    - 3100
-```
-
-This means you own BBRI stocks of 100 lots with purchase price of 3200, and 50 lots with purchase price of 3100.
-
-If you don't own stocks previously or want to see a clean slate, just delete the list.
+By default, auto-buy will only purchase stocks whose diff is greater than 0. You may also manually adjust your holdings by sell stocks which price had gone up from your average purchase prices, indicated by negative diff.
 """
 
 default_capital = int(os.getenv("DEFAULT_CAPITAL_AMOUNT", 100000000))
