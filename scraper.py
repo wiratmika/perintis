@@ -36,8 +36,6 @@ def scrape_save(date, data):
         issuers[code]["prices"][date] = price
         write("issuers", issuers)
 
-    return True
-
 
 @streamlit.cache
 def scrape_stockbit(token: str, pin: str):
