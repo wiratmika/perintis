@@ -7,6 +7,7 @@ import streamlit
 from dotenv import load_dotenv
 
 from data import dates
+from holding import purchase_holdings
 from portfolio import calculate
 from scraper import scrape, scrape_save
 
@@ -71,12 +72,8 @@ def difference_color(val):
 
 
 currency_format = "Rp{:,.0f}"
-
-result_to_show = (
-    filter(lambda x: x["Diff"] != 0, portfolio_result)
-    if hide_zero_diff
-    else portfolio_result
-)
+non_zero_diff_result = filter(lambda x: x["Diff"] != 0, portfolio_result)
+result_to_show = non_zero_diff_result if hide_zero_diff else portfolio_result
 
 if not buying_mode:
     portfolio = (
@@ -117,6 +114,12 @@ f"Capital spent : **Rp{spent:,}**"
 additional_capital *= 1.00145
 f"Additional capital required (excluding sales, including commission): **Rp{ceil(additional_capital):,}**"
 
+if streamlit.button("Purchase according to recommendation"):
+    if purchase_holdings(non_zero_diff_result):
+        "Purchase data sucessfully saved! Please refresh this page."
+    else:
+        "Oops something happened, please check console."
+
 "## Scraper"
 scrape_result = scrape()
 scrape_data = [{"Code": k, "Price": v} for k, v in scrape_result.items()]
@@ -128,6 +131,6 @@ scraper
 
 if streamlit.button("Save scrape result"):
     if scrape_save(today, scrape_result):
-        "Scrape result sucessfully saved!"
+        "Scrape result sucessfully saved! Please refresh this page."
     else:
-        "Oops something happened, please check console"
+        "Oops something happened, please check console."
