@@ -43,7 +43,7 @@ def scrape_stockbit(token: str, pin: str):
 
     if response.get("error") == "INVALID_SESSION":
         raise InvalidSessionException
-    order = response.json()["data"]
+    order = response["data"]
 
     return {
         "trade": trade,
