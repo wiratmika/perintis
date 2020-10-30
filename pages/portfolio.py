@@ -1,22 +1,23 @@
 import os
+from datetime import datetime
 from math import ceil
 
 import pandas as pd
 import streamlit as st
 
-from data import dates
 from exceptions import InvalidSessionException
 from holding import purchase_holdings
-from portfolio import calculate
+from core import calculate
 
 
 def app():
     st.header("Portfolio")
 
     capital = get_capital()
-    date = st.sidebar.selectbox("Price date", dates, index=len(dates) - 1)
+    today = datetime.now().date()
+
     try:
-        portfolio_result = calculate("IDX30", date, capital)
+        portfolio_result = calculate("IDX30", today, capital)
     except InvalidSessionException:
         st.write("Invalid Stockbit crendentials, please re-check.")
         return

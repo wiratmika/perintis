@@ -1,7 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 
-from pages import getting_started, portfolio, price_scraper
+from pages import getting_started, portfolio
 
 load_dotenv()
 st.set_page_config(page_title="Perintis", page_icon=":dollar:", layout="wide")
@@ -10,7 +10,6 @@ st.set_page_config(page_title="Perintis", page_icon=":dollar:", layout="wide")
 
 PAGES = {
     "Getting Started": getting_started,
-    "Price Scraper": price_scraper,
     "Portfolio": portfolio,
 }
 

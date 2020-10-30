@@ -3,18 +3,15 @@ from datetime import datetime
 import requests
 import streamlit
 
-from data import dates, issuers, write
 from exceptions import InvalidSessionException
 
 
 @streamlit.cache
-def scrape():
+def scrape_stocks():
     data = {}
-    for code in issuers.keys():
-        data[code] = None
 
     url = "https://scanner.tradingview.com/indonesia/scan"
-    payload = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","","etf","unit","mutual","money","reit","trust"]}],"options":{"data_restrictions":"PREV_BAR","lang":"id_ID"},"symbols":{"query":{"types":[]},"tickers":[]},"columns":["name","close"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,300]}'  ## noqa
+    payload = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","","etf","unit","mutual","money","reit","trust"]}],"options":{"data_restrictions":"PREV_BAR","lang":"id_ID"},"symbols":{"query":{"types":[]},"tickers":[]},"columns":["name","close","description"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,300]}'  ## noqa
 
     print("Calling price API...")
     response = requests.post(url, payload).json()["data"]
@@ -22,20 +19,10 @@ def scrape():
         info = content["d"]
         code = info[0]
         price = info[1]
-        if code in data:
-            data[code] = price
+        name = info[2]
+        data[code] = (name, price)
 
     return data
-
-
-def scrape_save(date, data):
-    if date not in dates:
-        dates.append(date)
-        write("dates", dates)
-
-    for code, price in data.items():
-        issuers[code]["prices"][date] = price
-        write("issuers", issuers)
 
 
 @streamlit.cache

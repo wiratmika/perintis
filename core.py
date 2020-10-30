@@ -1,8 +1,8 @@
 import os
 from math import floor
 
-from data import indices, issuers
-from scraper import scrape_stockbit
+from data import indices
+from scraper import scrape_stocks, scrape_stockbit
 
 
 def get_holdings():
@@ -29,16 +29,17 @@ def get_holdings():
 
 def calculate(index: str, date, capital: int):
     holdings = get_holdings()
+    stocks = scrape_stocks()
 
     result = []
-    index_period = date.strftime("%Y-%m")
-    index_list = indices[index][index_period]
-    total_market_cap = get_total_market_cap(index_list)
+    index_period = date.strftime("%Y-%m")  # TODO: handle back month
+    active_index = indices[index][index_period]
+    total_market_cap = get_total_market_cap(active_index)
 
-    for code, issuer in issuers.items():
-        price = issuer["prices"][date]
-        index_constituent = index_list[code]
-        market_cap = index_constituent[0] * index_constituent[1]
+    for code in indices[index][index_period].keys():
+        price = stocks[code][1]
+        constituent = active_index[code]
+        market_cap = constituent[0] * constituent[1]
         percentage = market_cap / total_market_cap
         weighted_value = percentage * capital
         shares = weighted_value / price
@@ -61,7 +62,7 @@ def calculate(index: str, date, capital: int):
                 "Diff": lots - owned,
                 "Lots": lots,
                 "Owned": owned,
-                "Name": issuer["name"],
+                "Name": stocks[code][0],
                 "Percentage": percentage,
                 "Ideal Value": capital * percentage,
                 "Expected Value": expected_value,
@@ -77,9 +78,7 @@ def calculate(index: str, date, capital: int):
 
 def get_total_market_cap(index):
     total_value = 0
-    for code, issuer in issuers.items():
-        index_constituent = index[code]
-        value = index_constituent[0] * index_constituent[1]
-        total_value += value
+    for code, constituent in index.items():
+        total_value += constituent[0] * constituent[1]
 
     return total_value
