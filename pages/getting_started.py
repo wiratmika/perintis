@@ -1,7 +1,15 @@
 import streamlit
 
+from core import get_stockbit_credentials
+
 
 def app():
+    credentials = get_stockbit_credentials()
+    if not credentials[0] or not credentials[1]:
+        streamlit.subheader(
+            "Warning: Stockbit credentials are not set. Portfolio will not work."
+        )
+
     streamlit.write(
         """
         ## How to use

@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 import requests
 import streamlit
@@ -17,19 +18,19 @@ def scrape_stocks():
     response = requests.post(url, payload).json()["data"]
     for content in response:
         info = content["d"]
-        code = info[0]
+        symbol = info[0]
         price = info[1]
         name = info[2]
-        data[code] = (name, price)
+        data[symbol] = (name, price)
 
     return data
 
 
 @streamlit.cache
-def scrape_stockbit(token: str, pin: str):
+def scrape_stockbit(credentials: Tuple[str, str]):
     headers = {
-        "x-pin": pin,
-        "authorization": f"Bearer {token}",
+        "x-pin": credentials[1],
+        "authorization": f"Bearer {credentials[0]}",
     }
 
     today = datetime.now().date().strftime("%Y-%m-%d")
