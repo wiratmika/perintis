@@ -4,6 +4,7 @@ import requests
 import streamlit
 
 from data import dates, issuers, write
+from exceptions import InvalidSessionException
 
 
 @streamlit.cache
@@ -51,7 +52,11 @@ def scrape_stockbit(token: str, pin: str):
 
     url = "https://api.stockbit.com/v2.4/trade/order?gtc=1"
     print("Calling Stockbit order API...")
-    order = requests.get(url, headers=headers).json()["data"]
+    response = requests.get(url, headers=headers).json()
+
+    if response.get("error") == "INVALID_SESSION":
+        raise InvalidSessionException
+    order = response.json()["data"]
 
     return {
         "trade": trade,

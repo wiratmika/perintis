@@ -5,6 +5,7 @@ import pandas as pd
 import streamlit as st
 
 from data import dates
+from exceptions import InvalidSessionException
 from holding import purchase_holdings
 from portfolio import calculate
 
@@ -14,7 +15,11 @@ def app():
 
     capital = get_capital()
     date = st.sidebar.selectbox("Price date", dates, index=len(dates) - 1)
-    portfolio_result = calculate("IDX30", date, capital)
+    try:
+        portfolio_result = calculate("IDX30", date, capital)
+    except InvalidSessionException:
+        st.write("Invalid Stockbit crendentials, please re-check.")
+        return
 
     auto_buy(portfolio_result)
 
