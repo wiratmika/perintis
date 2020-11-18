@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from math import floor
 
 from data import indices
@@ -32,11 +33,10 @@ def calculate(index: str, date, capital: int):
     stocks = scrape_stocks()
 
     result = []
-    index_period = date.strftime("%Y-%m")  # TODO: handle back month
-    active_index = indices[index][index_period]
+    active_index = get_latest_period_index(indices[index], date)
     total_market_cap = get_total_market_cap(active_index)
 
-    for symbol in indices[index][index_period].keys():
+    for symbol in active_index.keys():
         price = stocks[symbol][1]
         constituent = active_index[symbol]
         market_cap = constituent[0] * constituent[1]
@@ -74,6 +74,16 @@ def calculate(index: str, date, capital: int):
         )
 
     return result
+
+
+def get_latest_period_index(index, date):
+    index_period = date.strftime("%Y-%m")
+
+    while index_period not in index:
+        date = date - timedelta(days=30)
+        index_period = date.strftime("%Y-%m")
+
+    return index[index_period]
 
 
 def get_total_market_cap(index):

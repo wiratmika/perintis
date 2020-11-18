@@ -53,7 +53,7 @@ def get_capital():
 
 def auto_buy(portfolio_result):
     if st.button("Purchase according to recommended allocation"):
-        filtered_portfolio = filter(lambda x: x["Diff"] != 0, portfolio_result)
+        filtered_portfolio = filter(lambda x: x["Diff"] > 0, portfolio_result)
         result = purchase_holdings(filtered_portfolio)
         if result:
             for i in result:
