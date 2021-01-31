@@ -22,5 +22,3 @@ STOCKBIT_PIN=${pin}`;
 ## In development
 
 1. Track indices other than IDX30.
-2. Better holdings input mechanism.
-3. Add more documentations on other values.
