@@ -88,7 +88,7 @@ def get_latest_period_index(index, date):
 
 def get_total_market_cap(index):
     total_value = 0
-    for symbol, constituent in index.items():
+    for constituent in index.values():
         total_value += constituent[0] * constituent[1]
 
     return total_value
