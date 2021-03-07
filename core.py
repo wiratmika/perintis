@@ -7,7 +7,11 @@ from scraper import scrape_stocks, scrape_stockbit
 
 
 def get_holdings():
-    data = scrape_stockbit(get_stockbit_credentials())
+    credentials = get_stockbit_credentials()
+    if not (credentials[0] and credentials[1]):
+        return {}
+
+    data = scrape_stockbit(credentials)
     result = {}
 
     for day in data["trade"]:

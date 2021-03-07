@@ -7,7 +7,7 @@ import streamlit as st
 
 from exceptions import InvalidSessionException
 from holding import purchase_holdings
-from core import calculate
+from core import calculate, get_stockbit_credentials
 
 
 def app():
@@ -52,7 +52,10 @@ def get_capital():
 
 
 def auto_buy(portfolio_result):
-    if st.button("Purchase according to recommended allocation"):
+    credentials = get_stockbit_credentials()
+    if not (credentials[0] and credentials[1]):
+        st.write("Auto-purchase is not available do to missing or invalid credentials")
+    elif st.button("Purchase according to recommended allocation"):
         filtered_portfolio = filter(lambda x: x["Diff"] > 0, portfolio_result)
         result = purchase_holdings(filtered_portfolio)
         if result:
