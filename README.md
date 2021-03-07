@@ -6,7 +6,7 @@ Perintis (an inaccurate translation of Vanguard) is a tool to help your track an
 
 1. Install [Pipenv](https://pypi.org/project/pipenv/).
 2. Run `pipenv install`.
-3. Copy `.env.example` to `.env` and `data/holdings.yaml.example` to `holding.yaml`.
+3. Copy `.env.example` to `.env`.
 4. Fill `DEFAULT_CAPITAL_AMOUNT` in `.env` to your expected capital allocation in stocks.
 5. Log in to your Stockbit and brokerage account, then open browser console and run the following script. Copy the result to `.env`.
 
