@@ -12,7 +12,7 @@ def scrape_stocks():
     data = {}
 
     url = "https://scanner.tradingview.com/indonesia/scan"
-    payload = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","","etf","unit","mutual","money","reit","trust"]}],"options":{"data_restrictions":"PREV_BAR","lang":"id_ID"},"symbols":{"query":{"types":[]},"tickers":[]},"columns":["name","close","description"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,300]}'  ## noqa
+    payload = '{"filter":[{"left":"market_cap_basic","operation":"nempty"},{"left":"type","operation":"in_range","right":["stock","dr","fund"]},{"left":"subtype","operation":"in_range","right":["common","","etf","unit","mutual","money","reit","trust"]}],"options":{"data_restrictions":"PREV_BAR","lang":"id_ID"},"symbols":{"query":{"types":[]},"tickers":[]},"columns":["name","close","description","market_cap_basic"],"sort":{"sortBy":"market_cap_basic","sortOrder":"desc"},"range":[0,300]}'  ## noqa
 
     print("Calling price API...")
     response = requests.post(url, payload).json()["data"]
@@ -21,7 +21,8 @@ def scrape_stocks():
         symbol = info[0]
         price = info[1]
         name = info[2]
-        data[symbol] = (name, price)
+        market_cap = info[3]
+        data[symbol] = (name, price, market_cap)
 
     return data
 
