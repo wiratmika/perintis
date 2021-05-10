@@ -36,6 +36,7 @@ def app():
                 "Owned Value": currency_format,
                 "Diff Value": currency_format,
                 "Purchased Value": currency_format,
+                "Average Price": currency_format,
                 "Spent": currency_format,
             }
         )
