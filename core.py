@@ -1,6 +1,7 @@
 import os
+from collections import defaultdict
 from datetime import timedelta
-from math import floor
+from math import ceil, floor
 
 from data import indices
 from scraper import scrape_stocks, scrape_stockbit
@@ -12,22 +13,24 @@ def get_holdings():
         return {}
 
     data = scrape_stockbit(credentials)
-    result = {}
+    result = defaultdict(list)
 
     for day in data["trade"]:
         for activity in day["activity"]:
-            symbol = activity["symbol"]
-            lot = int(activity["lot"].replace(".0", ""))
-            price = int(activity["price"])
-            transaction = (lot, price)
-            result.setdefault(symbol, []).append(transaction)
+            transaction = {
+                "is_buy": activity["command"] == "BUY",
+                "lot": int(activity["lot"].replace(".0", "")),
+                "price": int(activity["price"]),
+            }
+            result[activity["symbol"]].append(transaction)
 
     for order in data["order"]:
-        symbol = order["symbol"]
-        lot = order["order_total"]
-        price = order["price_order"]
-        transaction = (lot, price)
-        result.setdefault(symbol, []).append(transaction)
+        transaction = {
+            "is_buy": True,
+            "lot": order["order_total"],
+            "price": order["price_order"],
+        }
+        result[order["symbol"]].append(transaction)
 
     return result
 
@@ -39,6 +42,7 @@ def calculate(index: str, date, capital: int):
     result = []
     active_index = get_latest_period_index(indices[index], date)
     total_market_cap = get_total_market_cap(active_index)
+    total_current_value = 0
 
     for symbol in active_index.keys():
         price = stocks[symbol][1]
@@ -48,15 +52,23 @@ def calculate(index: str, date, capital: int):
         weighted_value = percentage * capital
         shares = weighted_value / price
         lots = floor(shares / 100)
-        holding = holdings.get(symbol, [])
+        transactions = holdings.get(symbol, [])
         owned = 0
         owned_value = 0
         purchased_value = 0
-        for i in holding:
-            owned += i[0]
-            owned_value += i[0] * price * 100
-            purchased_value += i[0] * i[1] * 100
+        for transaction in transactions:
+            if transaction["is_buy"]:
+                owned += transaction["lot"]
+                owned_value += transaction["lot"] * price * 100
+                purchased_value += transaction["lot"] * transaction["price"] * 100
+            else:
+                owned -= transaction["lot"]
+                owned_value -= transaction["lot"] * price * 100
+                purchased_value -= (
+                    transaction["lot"] * transaction["price"] * 100
+                )  # TODO: really?
 
+        total_current_value += owned_value
         expected_value = lots * 100 * price
 
         result.append(
@@ -73,14 +85,16 @@ def calculate(index: str, date, capital: int):
                 "Owned Value": owned_value,
                 "Diff Value": expected_value - owned_value,
                 "Purchased Value": purchased_value,
-                "Average Price": purchased_value / owned / 100,
+                "Average Price": purchased_value / owned / 100
+                if owned
+                else 0,  # TODO really?
             }
         )
 
-    value = 0
+    total_expected_value = 0
     capital_needed = 0
     for i in result:
-        value += i["Expected Value"]
+        total_expected_value += i["Expected Value"]
         capital_needed += i["Diff Value"] if i["Diff Value"] > 0 else 0
 
     capital_needed *= 1.0015
@@ -88,7 +102,8 @@ def calculate(index: str, date, capital: int):
 
     return {
         "stocks": result,
-        "value": value,
+        "total_current_value": total_current_value,
+        "total_expected_value": total_expected_value,
         "capital_needed": capital_needed,
     }
 

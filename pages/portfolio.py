@@ -13,14 +13,9 @@ from core import calculate, get_stockbit_credentials
 def app():
     st.header("Portfolio")
 
-    capital = get_capital()
     today = datetime.now().date()
-
-    try:
-        portfolio_result = calculate("IDX30", today, capital)
-    except InvalidSessionException:
-        st.write("Invalid Stockbit crendentials, please re-check.")
-        return
+    capital = get_capital(today)
+    portfolio_result = calculate("IDX30", today, capital)
 
     auto_buy(portfolio_result["stocks"])
 
@@ -47,9 +42,19 @@ def app():
     summary(portfolio_result)
 
 
-def get_capital():
-    default_capital = int(os.getenv("DEFAULT_CAPITAL_AMOUNT", 100000000))
-    return st.sidebar.number_input("Your capital", value=default_capital, step=1000000)
+def get_capital(today):
+    topup_amount = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
+    portfolio_result = calculate("IDX30", today, 0)
+
+    if st.sidebar.button("Approximate based on top-up amount"):
+        capital = 0
+        while portfolio_result["capital_needed"] < topup_amount:
+            capital += 1000000
+            portfolio_result = calculate("IDX30", today, capital)
+
+        return capital
+
+    return portfolio_result["total_current_value"] or 100000000
 
 
 def auto_buy(portfolio_result):
@@ -66,7 +71,12 @@ def auto_buy(portfolio_result):
 
 
 def summary(portfolio_result):
-    st.sidebar.write(f"Expected portfolio value: **Rp{portfolio_result['value']:,}**")
+    st.sidebar.write(
+        f"Current portfolio value: **Rp{portfolio_result['total_current_value']:,}**"
+    )
+    st.sidebar.write(
+        f"Expected portfolio value: **Rp{portfolio_result['total_expected_value']:,}**"
+    )
     st.sidebar.write(
         f"Additional capital required (including commission): **Rp{portfolio_result['capital_needed']:,}**"
     )
