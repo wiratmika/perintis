@@ -22,11 +22,11 @@ def app():
         st.write("Invalid Stockbit crendentials, please re-check.")
         return
 
-    auto_buy(portfolio_result)
+    auto_buy(portfolio_result["stocks"])
 
     currency_format = "Rp{:,.0f}"
     st.dataframe(
-        pd.DataFrame(portfolio_result)
+        pd.DataFrame(portfolio_result["stocks"])
         .style.format(
             {
                 "Price": "{:,}",
@@ -66,24 +66,9 @@ def auto_buy(portfolio_result):
 
 
 def summary(portfolio_result):
-    value = 0
-    spent = 0
-    capital_needed = 0
-
-    for i in portfolio_result:
-        value += i["Expected Value"]
-        spent += i["Spent"]
-        capital_needed += i["Diff Value"] if i["Diff Value"] > 0 else 0
-
-    st.sidebar.write(f"Expected portfolio value: **Rp{value:,}**")
-
-    spent = ceil(spent)
-    st.sidebar.write(f"Capital spent: **Rp{spent:,}**")
-
-    capital_needed *= 1.0015
-    capital_needed = ceil(capital_needed)
+    st.sidebar.write(f"Expected portfolio value: **Rp{portfolio_result['value']:,}**")
     st.sidebar.write(
-        f"Additional capital required (including commission): **Rp{capital_needed:,}**"
+        f"Additional capital required (including commission): **Rp{portfolio_result['capital_needed']:,}**"
     )
 
 

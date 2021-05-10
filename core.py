@@ -74,11 +74,23 @@ def calculate(index: str, date, capital: int):
                 "Diff Value": expected_value - owned_value,
                 "Purchased Value": purchased_value,
                 "Average Price": purchased_value / owned / 100,
-                "Spent": purchased_value * 1.0015,
             }
         )
 
-    return result
+    value = 0
+    capital_needed = 0
+    for i in result:
+        value += i["Expected Value"]
+        capital_needed += i["Diff Value"] if i["Diff Value"] > 0 else 0
+
+    capital_needed *= 1.0015
+    capital_needed = ceil(capital_needed)
+
+    return {
+        "stocks": result,
+        "value": value,
+        "capital_needed": capital_needed,
+    }
 
 
 def get_latest_period_index(index, date):
