@@ -73,7 +73,7 @@ def calculate(index: str, date, capital: int):
                 "Owned Value": owned_value,
                 "Diff Value": expected_value - owned_value,
                 "Purchased Value": purchased_value,
-                "Spent": purchased_value * 1.00145,
+                "Spent": purchased_value * 1.0015,
             }
         )
 
