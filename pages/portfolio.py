@@ -80,7 +80,7 @@ def summary(portfolio_result):
     spent = ceil(spent)
     st.sidebar.write(f"Capital spent: **Rp{spent:,}**")
 
-    capital_needed *= 1.00145
+    capital_needed *= 1.0015
     capital_needed = ceil(capital_needed)
     st.sidebar.write(
         f"Additional capital required (including commission): **Rp{capital_needed:,}**"
