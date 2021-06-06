@@ -14,8 +14,8 @@ def app():
     st.header("Portfolio")
 
     today = datetime.now().date()
-    capital = get_capital(today)
-    portfolio_result = calculate("IDX30", today, capital)
+    contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
+    portfolio_result = calculate("IDX30", today, contribution)
 
     auto_buy(portfolio_result["stocks"])
 
@@ -40,21 +40,6 @@ def app():
     )
 
     summary(portfolio_result)
-
-
-def get_capital(today):
-    topup_amount = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
-    portfolio_result = calculate("IDX30", today, 0)
-
-    if st.sidebar.button("Approximate based on top-up amount"):
-        capital = 0
-        while portfolio_result["capital_needed"] < topup_amount:
-            capital += 1000000
-            portfolio_result = calculate("IDX30", today, capital)
-
-        return capital
-
-    return portfolio_result["total_current_value"] or 100000000
 
 
 def auto_buy(portfolio_result):

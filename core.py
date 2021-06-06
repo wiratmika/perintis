@@ -3,6 +3,8 @@ from collections import defaultdict
 from datetime import timedelta
 from math import ceil, floor
 
+import streamlit
+
 from data import indices
 from scraper import scrape_stocks, scrape_stockbit
 
@@ -35,7 +37,7 @@ def get_holdings():
     return result
 
 
-def calculate(index: str, date, capital: int):
+def calculate(index: str, date, contribution: int):
     holdings = get_holdings()
     stocks = scrape_stocks()
 
@@ -43,6 +45,8 @@ def calculate(index: str, date, capital: int):
     active_index = get_latest_period_index(indices[index], date)
     total_market_cap = get_total_market_cap(active_index)
     total_current_value = 0
+
+    capital = get_current_portfolio_value(active_index, stocks, holdings) + contribution
 
     for symbol in active_index.keys():
         price = stocks[symbol][1]
@@ -106,6 +110,25 @@ def calculate(index: str, date, capital: int):
         "total_expected_value": total_expected_value,
         "capital_needed": capital_needed,
     }
+
+
+@streamlit.cache
+def get_current_portfolio_value(active_index, stocks, holdings):
+    total_value = 0
+
+    for symbol in active_index.keys():
+        price = stocks[symbol][1]
+        transactions = holdings.get(symbol, [])
+        owned_value = 0
+        for transaction in transactions:
+            if transaction["is_buy"]:
+                owned_value += transaction["lot"] * price * 100
+            else:
+                owned_value -= transaction["lot"] * price * 100
+
+        total_value += owned_value
+
+    return total_value
 
 
 def get_latest_period_index(index, date):
