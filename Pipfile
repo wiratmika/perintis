@@ -10,7 +10,6 @@ streamlit = "*"
 flake8 = "*"
 black = "*"
 requests = "*"
-"ruamel.yaml" = "*"
 python-dotenv = "*"
 
 [requires]
