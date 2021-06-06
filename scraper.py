@@ -51,3 +51,9 @@ def scrape_stockbit(credentials: Tuple[str, str]):
         "trade": trade,
         "order": order,
     }
+
+
+@streamlit.cache
+def get_indices():
+    url = "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/idx30.json"
+    return {"IDX30": requests.get(url).json()}

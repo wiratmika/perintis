@@ -1,11 +1,6 @@
-import os
-from datetime import datetime
-from math import ceil
-
 import pandas as pd
 import streamlit as st
 
-from exceptions import InvalidSessionException
 from holding import purchase_holdings
 from core import calculate, get_stockbit_credentials
 
@@ -13,9 +8,8 @@ from core import calculate, get_stockbit_credentials
 def app():
     st.header("Portfolio")
 
-    today = datetime.now().date()
     contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
-    portfolio_result = calculate("IDX30", today, contribution)
+    portfolio_result = calculate("IDX30", contribution)
 
     auto_buy(portfolio_result["stocks"])
 

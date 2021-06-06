@@ -5,8 +5,7 @@ from math import ceil, floor
 
 import streamlit
 
-from data import indices
-from scraper import scrape_stocks, scrape_stockbit
+from scraper import scrape_stocks, scrape_stockbit, get_indices
 
 
 def get_holdings():
@@ -37,12 +36,12 @@ def get_holdings():
     return result
 
 
-def calculate(index: str, date, contribution: int):
+def calculate(index: str, contribution: int):
     holdings = get_holdings()
     stocks = scrape_stocks()
 
     result = []
-    active_index = get_latest_period_index(indices[index], date)
+    active_index = get_indices()[index]
     total_market_cap = get_total_market_cap(active_index)
     total_current_value = 0
 
@@ -51,7 +50,7 @@ def calculate(index: str, date, contribution: int):
     for symbol in active_index.keys():
         price = stocks[symbol][1]
         constituent = active_index[symbol]
-        market_cap = constituent[0] * constituent[1]
+        market_cap = constituent["shares"] * constituent["price"]
         percentage = market_cap / total_market_cap
         weighted_value = percentage * capital
         shares = weighted_value / price
@@ -131,20 +130,10 @@ def get_current_portfolio_value(active_index, stocks, holdings):
     return total_value
 
 
-def get_latest_period_index(index, date):
-    index_period = date.strftime("%Y-%m")
-
-    while index_period not in index:
-        date = date - timedelta(days=30)
-        index_period = date.strftime("%Y-%m")
-
-    return index[index_period]
-
-
 def get_total_market_cap(index):
     total_value = 0
     for constituent in index.values():
-        total_value += constituent[0] * constituent[1]
+        total_value += constituent["shares"] * constituent["price"]
 
     return total_value
 
