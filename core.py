@@ -9,29 +9,20 @@ from scraper import scrape_stocks, scrape_stockbit, get_indices
 
 
 def get_holdings():
-    credentials = get_stockbit_credentials()
-    if not (credentials[0] and credentials[1]):
+    token = get_stockbit_token()
+    if not token:
         return {}
 
-    data = scrape_stockbit(credentials)
-    result = defaultdict(list)
+    data = scrape_stockbit(token)
+    result = {}
 
-    for day in data["trade"]:
-        for activity in day["activity"]:
-            transaction = {
-                "is_buy": activity["command"] == "BUY",
-                "lot": int(activity["lot"].replace(".0", "")),
-                "price": int(activity["price"]),
-            }
-            result[activity["symbol"]].append(transaction)
+    # TODO: handle buy orders
 
-    for order in data["order"]:
-        transaction = {
-            "is_buy": True,
-            "lot": order["order_total"],
-            "price": order["price_order"],
+    for datum in data["portfolio"]:
+        result[datum["symbol"]] = {
+            "shares": datum["balance_lot"],
+            "value": datum["total"],
         }
-        result[order["symbol"]].append(transaction)
 
     return result
 
@@ -45,7 +36,7 @@ def calculate(index: str, contribution: int):
     total_market_cap = get_total_market_cap(active_index)
     total_current_value = 0
 
-    capital = get_current_portfolio_value(active_index, stocks, holdings) + contribution
+    capital = get_portfolio_market_value(stocks, holdings) + contribution
 
     for symbol in active_index.keys():
         price = stocks[symbol][1]
@@ -55,23 +46,15 @@ def calculate(index: str, contribution: int):
         weighted_value = percentage * capital
         shares = weighted_value / price
         lots = floor(shares / 100)
-        transactions = holdings.get(symbol, [])
-        owned = 0
-        owned_value = 0
-        purchased_value = 0
-        for transaction in transactions:
-            if transaction["is_buy"]:
-                owned += transaction["lot"]
-                owned_value += transaction["lot"] * price * 100
-                purchased_value += transaction["lot"] * transaction["price"] * 100
-            else:
-                owned -= transaction["lot"]
-                owned_value -= transaction["lot"] * price * 100
-                purchased_value -= (
-                    transaction["lot"] * transaction["price"] * 100
-                )  # TODO: really?
 
-        total_current_value += owned_value
+        holding = holdings.get(symbol, {
+            "shares": 0,
+            "value": 0,
+        })
+        owned = holding["shares"]
+        owned_value = price * owned * 100
+        purchased_value = holding["value"]
+        total_current_value += holding["value"]
         expected_value = lots * 100 * price
 
         result.append(
@@ -88,9 +71,7 @@ def calculate(index: str, contribution: int):
                 "Owned Value": owned_value,
                 "Diff Value": expected_value - owned_value,
                 "Purchased Value": purchased_value,
-                "Average Price": purchased_value / owned / 100
-                if owned
-                else 0,  # TODO really?
+                "Average Price": purchased_value / owned / 100 if owned else 0
             }
         )
 
@@ -112,20 +93,12 @@ def calculate(index: str, contribution: int):
 
 
 @streamlit.cache
-def get_current_portfolio_value(active_index, stocks, holdings):
+def get_portfolio_market_value(stocks, holdings):
     total_value = 0
 
-    for symbol in active_index.keys():
+    for symbol, holding in holdings.items():
         price = stocks[symbol][1]
-        transactions = holdings.get(symbol, [])
-        owned_value = 0
-        for transaction in transactions:
-            if transaction["is_buy"]:
-                owned_value += transaction["lot"] * price * 100
-            else:
-                owned_value -= transaction["lot"] * price * 100
-
-        total_value += owned_value
+        total_value += price * holding["shares"]
 
     return total_value
 
@@ -138,7 +111,5 @@ def get_total_market_cap(index):
     return total_value
 
 
-def get_stockbit_credentials():
-    token = os.getenv("STOCKBIT_TOKEN")
-    pin = os.getenv("STOCKBIT_PIN")
-    return (token, pin)
+def get_stockbit_token():
+    return os.getenv("STOCKBIT_TOKEN")

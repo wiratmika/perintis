@@ -1,13 +1,13 @@
 import streamlit
 
-from core import get_stockbit_credentials
+from core import get_stockbit_token
 
 
 def app():
-    credentials = get_stockbit_credentials()
-    if not (credentials[0] and credentials[1]):
+    token = get_stockbit_token()
+    if not token:
         streamlit.subheader(
-            "Warning: Stockbit credentials are not set. Automatic portfolio retrieval and purchase will not work."
+            "Warning: Stockbit token is not set. Automatic portfolio retrieval and purchase will not work."
         )
 
     streamlit.write(

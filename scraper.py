@@ -28,28 +28,17 @@ def scrape_stocks():
 
 
 @streamlit.cache
-def scrape_stockbit(credentials: Tuple[str, str]):
+def scrape_stockbit(token):
     headers = {
-        "x-pin": credentials[1],
-        "authorization": f"Bearer {credentials[0]}",
+        "authorization": f"Bearer {token}",
     }
 
-    today = datetime.now().date().strftime("%Y-%m-%d")
-    url = f"https://api.stockbit.com/v2.4/trade/report/trade_activity?start=1970-01-01&end={today}"
-    print("Calling Stockbit trade API...")
-    trade = requests.get(url, headers=headers).json()["data"]["result"]
-
-    url = "https://api.stockbit.com/v2.4/trade/order?gtc=1"
-    print("Calling Stockbit order API...")
-    response = requests.get(url, headers=headers).json()
-
-    if response.get("error") == "INVALID_SESSION":
-        raise InvalidSessionException
-    order = response["data"]
+    url = f"https://trading.masonline.id/portfolio"
+    print("Calling Stockbit portfolio API...")
+    portfolio = requests.get(url, headers=headers).json()["data"]["result"]
 
     return {
-        "trade": trade,
-        "order": order,
+        "portfolio": portfolio,
     }
 
 

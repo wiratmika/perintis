@@ -2,14 +2,14 @@ from typing import Tuple
 
 import requests
 
-from core import get_stockbit_credentials
+from core import get_stockbit_token
 
 
 def purchase_holdings(data):
     result = []
     for datum in data:
         response = purchase_stockbit(
-            get_stockbit_credentials(),
+            get_stockbit_token(),
             datum["Symbol"],
             datum["Diff"],
             datum["Price"],

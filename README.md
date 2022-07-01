@@ -11,11 +11,7 @@ Perintis (an inaccurate translation of Vanguard) is a tool to help your track an
 
 ```
 const token = Base64.decode(localStorage.getItem("at"));
-const pin = window.localStorage.tpt;
-
-// Copy these individually
 `STOCKBIT_TOKEN=${token}`;
-`STOCKBIT_PIN=${pin}`;
 ```
 
 6. Run `pipenv run streamlit run perintis.py`.

@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from holding import purchase_holdings
-from core import calculate, get_stockbit_credentials
+from core import calculate, get_stockbit_token
 
 
 def app():
@@ -37,7 +37,7 @@ def app():
 
 
 def auto_buy(portfolio_result):
-    credentials = get_stockbit_credentials()
+    credentials = get_stockbit_token()
     if not (credentials[0] and credentials[1]):
         st.write("Auto-purchase is not available do to missing or invalid credentials")
     elif st.button("Purchase according to recommended allocation"):
