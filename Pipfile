@@ -11,6 +11,7 @@ flake8 = "*"
 black = "*"
 requests = "*"
 python-dotenv = "*"
+watchdog = "*"
 
 [requires]
 python_version = "3.8"
