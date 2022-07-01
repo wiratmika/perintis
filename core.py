@@ -98,7 +98,7 @@ def get_portfolio_market_value(stocks, holdings):
 
     for symbol, holding in holdings.items():
         price = stocks[symbol][1]
-        total_value += price * holding["shares"]
+        total_value += holding["shares"] * 100 * price
 
     return total_value
 
