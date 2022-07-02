@@ -10,7 +10,7 @@ def purchase_holdings(data):
     for datum in data:
         response = purchase_stockbit(
             get_stockbit_token(),
-            datum["Symbol"],
+            datum["Ticker"],
             datum["Diff"],
             datum["Price"],
         )
@@ -19,8 +19,8 @@ def purchase_holdings(data):
     return result
 
 
-def purchase_stockbit(credentials: Tuple[str, str], symbol: str, lots: int, price: int):
-    url = f"https://api.stockbit.com/v2.4/trade/buy/{symbol}"
+def purchase_stockbit(credentials: Tuple[str, str], ticker: str, lots: int, price: int):
+    url = f"https://api.stockbit.com/v2.4/trade/buy/{ticker}"
     headers = {
         "x-pin": credentials[1],
         "authorization": f"Bearer {credentials[0]}",

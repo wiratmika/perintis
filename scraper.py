@@ -18,11 +18,11 @@ def scrape_stocks():
     response = requests.post(url, payload).json()["data"]
     for content in response:
         info = content["d"]
-        symbol = info[0]
+        ticker = info[0]
         price = info[1]
         name = info[2]
         market_cap = info[3]
-        data[symbol] = (name, price, market_cap)
+        data[ticker] = (name, price, market_cap)
 
     return data
 
@@ -35,7 +35,12 @@ def scrape_stockbit(token):
 
     url = f"https://trading.masonline.id/portfolio"
     print("Calling Stockbit portfolio API...")
-    portfolio = requests.get(url, headers=headers).json()["data"]["result"]
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 401:
+        raise InvalidSessionException
+
+    portfolio = response.json()["data"]["result"]
 
     return {
         "portfolio": portfolio,

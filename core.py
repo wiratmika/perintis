@@ -53,16 +53,16 @@ def calculate(index: str, contribution: int):
 
     capital = get_portfolio_market_value(stocks, holdings) + contribution
 
-    for symbol in active_index.keys():
-        price = stocks[symbol][1]
-        constituent = active_index[symbol]
+    for ticker in active_index.keys():
+        price = stocks[ticker][1]
+        constituent = active_index[ticker]
         market_cap = constituent["shares"] * constituent["price"]
         percentage = market_cap / total_market_cap
         weighted_value = percentage * capital
         shares = weighted_value / price
         lots = floor(shares / 100)
 
-        holding = holdings.get(symbol, {
+        holding = holdings.get(ticker, {
             "shares": 0,
             "value": 0,
         })
@@ -74,12 +74,12 @@ def calculate(index: str, contribution: int):
 
         result.append(
             {
-                "Symbol": symbol,
+                "Ticker": ticker,
                 "Price": price,
                 "Diff": lots - owned,
                 "Lots": lots,
                 "Owned": owned,
-                "Name": stocks[symbol][0],
+                "Name": stocks[ticker][0],
                 "Percentage": percentage,
                 "Ideal Value": capital * percentage,
                 "Expected Value": expected_value,
@@ -111,8 +111,8 @@ def calculate(index: str, contribution: int):
 def get_portfolio_market_value(stocks, holdings):
     total_value = 0
 
-    for symbol, holding in holdings.items():
-        price = stocks[symbol][1]
+    for ticker, holding in holdings.items():
+        price = stocks[ticker][1]
         total_value += holding["shares"] * 100 * price
 
     return total_value
