@@ -10,7 +10,7 @@ Perintis (an inaccurate translation of Vanguard) is a tool to help your track an
 4. Log in to your Stockbit and brokerage account, then open browser console and run the following script. Copy the result to `.env`.
 
 ```
-const token = Base64.decode(localStorage.getItem("at"));
+const token = localStorage.getItem("securitiesAccessToken");
 `STOCKBIT_TOKEN=${token}`;
 ```
 
