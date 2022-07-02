@@ -1,3 +1,4 @@
+import time
 from typing import Tuple
 
 import requests
@@ -19,15 +20,14 @@ def purchase_holdings(data):
     return result
 
 
-def purchase_stockbit(credentials: Tuple[str, str], ticker: str, lots: int, price: int):
+def purchase_stockbit(stockbit_token: str, ticker: str, lots: int, price: int):
     url = f"https://api.stockbit.com/v2.4/trade/buy/{ticker}"
     headers = {
-        "x-pin": credentials[1],
-        "authorization": f"Bearer {credentials[0]}",
-        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryqpVBY9Ecoklfrz45",
+        "authorization": f"Bearer {stockbit_token}",
     }
+    epoch_time_in_ms = int(time.time()) * 1000
     shares = lots * 100
-    data = f'------WebKitFormBoundaryqpVBY9Ecoklfrz45\r\nContent-Disposition: form-data; name="price"\r\n\r\n{price}\r\n------WebKitFormBoundaryqpVBY9Ecoklfrz45\r\nContent-Disposition: form-data; name="shares"\r\n\r\n{shares}\r\n------WebKitFormBoundaryqpVBY9Ecoklfrz45\r\nContent-Disposition: form-data; name="boardtype"\r\n\r\nRG\r\n------WebKitFormBoundaryqpVBY9Ecoklfrz45\r\nContent-Disposition: form-data; name="tradeshare"\r\n\r\n0\r\n------WebKitFormBoundaryqpVBY9Ecoklfrz45\r\nContent-Disposition: form-data; name="gtc"\r\n\r\n1\r\n------WebKitFormBoundaryqpVBY9Ecoklfrz45--\r\n'  # noqa
+    data = f'orderkey=W-BUY-{epoch_time_in_ms}&symbol={ticker}&price={price}&shares={shares}&boardtype=RG&gtc=1'
 
     print("Calling Stockbit buy API...")
     result = requests.post(url, data, headers=headers)
