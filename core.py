@@ -68,33 +68,29 @@ def calculate(index: str, contribution: int):
         })
         owned = holding["shares"]
         owned_value = price * owned * 100
-        purchased_value = holding["value"]
         total_current_value += holding["value"]
         expected_value = lots * 100 * price
 
         result.append(
             {
                 "Ticker": ticker,
-                "Price": price,
-                "Diff": lots - owned,
-                "Lots": lots,
-                "Owned": owned,
                 "Name": stocks[ticker][0],
-                "Percentage": percentage,
-                "Ideal Value": capital * percentage,
-                "Expected Value": expected_value,
-                "Owned Value": owned_value,
-                "Diff Value": expected_value - owned_value,
-                "Purchased Value": purchased_value,
-                "Average Price": purchased_value / owned / 100 if owned else 0
+                "Price": price,
+                "Desired": lots,
+                "Owned": owned,
+                "Diff": lots - owned,
+                "Weight": percentage,
+                "Desired Value": expected_value,
+                "Owned Market Value": owned_value,
+                "Value Differences": expected_value - owned_value,
             }
         )
 
     total_expected_value = 0
     capital_needed = 0
     for i in result:
-        total_expected_value += i["Expected Value"]
-        capital_needed += i["Diff Value"] if i["Diff Value"] > 0 else 0
+        total_expected_value += i["Desired Value"]
+        capital_needed += i["Value Differences"] if i["Value Differences"] > 0 else 0
 
     capital_needed *= 1.001  # 0.10% brokerage commission
     capital_needed = ceil(capital_needed)

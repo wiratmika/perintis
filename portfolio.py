@@ -19,18 +19,14 @@ def app():
         .style.format(
             {
                 "Price": "{:,}",
-                "Percentage": "{:.2%}",
-                "Ideal Value": currency_format,
-                "Expected Value": currency_format,
-                "Owned Value": currency_format,
-                "Diff Value": currency_format,
-                "Purchased Value": currency_format,
-                "Average Price": currency_format,
-                "Spent": currency_format,
+                "Weight": "{:.2%}",
+                "Desired Value": currency_format,
+                "Owned Market Value": currency_format,
+                "Value Differences": currency_format,
             }
         )
-        .applymap(_diff_color, subset=["Diff"]),
-        height=600,
+        .applymap(_diff_color, subset=["Diff", "Value Differences"]),
+        height=750,
     )
 
     summary(portfolio_result)
