@@ -14,6 +14,17 @@ const token = localStorage.getItem("securitiesAccessToken");
 `STOCKBIT_TOKEN=${token}`;
 ```
 
+5. Optionally, if you have stocks in other broker, put them in a new file named `holdings.json` with this format:
+
+```
+{
+    "<ticker>": {
+        "shares": <number of shares in lots/multiple of 100)>,
+        "value": <purchase value>
+    }
+}
+```
+
 6. Run `pipenv run streamlit run perintis.py`.
 
 ## FAQ

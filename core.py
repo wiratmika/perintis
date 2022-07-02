@@ -1,4 +1,5 @@
 import os
+import json
 from collections import defaultdict
 from datetime import timedelta
 from math import ceil, floor
@@ -23,6 +24,20 @@ def get_holdings():
             "shares": datum["balance_lot"],
             "value": datum["total"],
         }
+
+    local_data = get_local_holdings()
+    if not local_data:
+        return result
+
+    for ticker, holding in local_data.items():
+        if ticker in result:
+            result[ticker]["shares"] += holding["shares"]
+            result[ticker]["value"] += holding["value"]
+        else:
+            result[ticker] = {
+                "shares": holding["shares"],
+                "value": holding["value"],
+            }
 
     return result
 
@@ -113,3 +128,13 @@ def get_total_market_cap(index):
 
 def get_stockbit_token():
     return os.getenv("STOCKBIT_TOKEN")
+
+
+def get_local_holdings():
+    if not os.path.isfile("holdings.json"):
+        return {}
+
+    with open("holdings.json", "r") as holdings_file:
+        holdings = json.load(holdings_file)
+
+    return holdings
