@@ -10,11 +10,11 @@ from scraper import scrape_stocks, scrape_stockbit, get_indices
 
 
 def get_holdings():
-    token = get_stockbit_token()
-    if not token:
+    stockbit_token = get_stockbit_token()
+    if not stockbit_token:
         return {}
 
-    data = scrape_stockbit(token)
+    data = scrape_stockbit(stockbit_token)
     result = {}
 
     # TODO: handle buy orders

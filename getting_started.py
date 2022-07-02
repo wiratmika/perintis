@@ -4,8 +4,8 @@ from core import get_stockbit_token
 
 
 def app():
-    token = get_stockbit_token()
-    if not token:
+    stockbit_token = get_stockbit_token()
+    if not stockbit_token:
         streamlit.subheader(
             "Warning: Stockbit token is not set. Automatic portfolio retrieval and purchase will not work."
         )

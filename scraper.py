@@ -28,9 +28,9 @@ def scrape_stocks():
 
 
 @streamlit.cache
-def scrape_stockbit(token):
+def scrape_stockbit(stockbit_token: str):
     headers = {
-        "authorization": f"Bearer {token}",
+        "authorization": f"Bearer {stockbit_token}",
     }
 
     url = f"https://trading.masonline.id/portfolio"

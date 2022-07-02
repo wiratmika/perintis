@@ -37,8 +37,8 @@ def app():
 
 
 def auto_buy(portfolio_result):
-    credentials = get_stockbit_token()
-    if not (credentials[0] and credentials[1]):
+    stockbit_token = get_stockbit_token()
+    if not stockbit_token:
         st.write("Auto-purchase is not available do to missing or invalid credentials")
     elif st.button("Purchase according to recommended allocation"):
         filtered_portfolio = filter(lambda x: x["Diff"] > 0, portfolio_result)
