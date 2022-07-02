@@ -96,7 +96,7 @@ def calculate(index: str, contribution: int):
         total_expected_value += i["Expected Value"]
         capital_needed += i["Diff Value"] if i["Diff Value"] > 0 else 0
 
-    capital_needed *= 1.0015
+    capital_needed *= 1.001  # 0.10% brokerage commission
     capital_needed = ceil(capital_needed)
 
     return {
