@@ -92,7 +92,9 @@ def calculate(index: str, contribution: int):
         total_expected_value += i["Desired Value"]
         capital_needed += i["Value Differences"] if i["Value Differences"] > 0 else 0
 
+    requires_stamp_duty = capital_needed > 10000000
     capital_needed *= 1.001  # 0.10% brokerage commission
+    capital_needed += 10000 if requires_stamp_duty else 0
     capital_needed = ceil(capital_needed)
 
     return {
