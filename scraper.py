@@ -7,7 +7,6 @@ import streamlit
 from exceptions import InvalidSessionException
 
 
-@streamlit.cache
 def scrape_stocks():
     data = {}
 
@@ -27,8 +26,7 @@ def scrape_stocks():
     return data
 
 
-@streamlit.cache
-def scrape_stockbit(stockbit_token: str):
+def scrape_stockbit_portfolio(stockbit_token: str):
     headers = {
         "authorization": f"Bearer {stockbit_token}",
     }
@@ -36,15 +34,26 @@ def scrape_stockbit(stockbit_token: str):
     url = f"https://trading.masonline.id/portfolio"
     print("Calling Stockbit portfolio API...")
     response = requests.get(url, headers=headers)
-    
+
     if response.status_code == 401:
         raise InvalidSessionException
 
-    portfolio = response.json()["data"]["result"]
+    return response.json()["data"]["result"]
 
-    return {
-        "portfolio": portfolio,
+
+def scrape_stockbit_order(stockbit_token: str):
+    headers = {
+        "authorization": f"Bearer {stockbit_token}",
     }
+
+    url = f"https://trading.masonline.id/order/list?gtc=1"
+    print("Calling Stockbit order API...")
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 401:
+        raise InvalidSessionException
+
+    return response.json()["data"]
 
 
 @streamlit.cache

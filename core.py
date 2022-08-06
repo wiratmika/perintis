@@ -6,7 +6,12 @@ from math import ceil, floor
 
 import streamlit
 
-from scraper import scrape_stocks, scrape_stockbit, get_indices
+from scraper import (
+    get_indices,
+    scrape_stockbit_order,
+    scrape_stockbit_portfolio,
+    scrape_stocks,
+)
 
 
 def get_holdings():
@@ -14,16 +19,27 @@ def get_holdings():
     if not stockbit_token:
         return {}
 
-    data = scrape_stockbit(stockbit_token)
+    portfolio = scrape_stockbit_portfolio(stockbit_token)
+    orders = scrape_stockbit_order(stockbit_token)
+    open_orders = filter(lambda x: x["status"] == "OPEN", orders)
     result = {}
 
-    # TODO: handle buy orders
-
-    for datum in data["portfolio"]:
+    for datum in portfolio:
         result[datum["symbol"]] = {
             "shares": datum["balance_lot"],
             "value": datum["total"],
         }
+
+    for datum in open_orders:
+        ticker = datum["symbol"]
+        if ticker in result:
+            result[ticker]["shares"] += datum["order_total"]
+            result[ticker]["value"] += datum["amount_invested"]
+        else:
+            result[ticker] = {
+                "shares": datum["order_total"],
+                "value": datum["amount_invested"],
+            }
 
     local_data = get_local_holdings()
     if not local_data:
@@ -62,10 +78,13 @@ def calculate(index: str, contribution: int):
         shares = weighted_value / price
         lots = floor(shares / 100)
 
-        holding = holdings.get(ticker, {
-            "shares": 0,
-            "value": 0,
-        })
+        holding = holdings.get(
+            ticker,
+            {
+                "shares": 0,
+                "value": 0,
+            },
+        )
         owned = holding["shares"]
         owned_value = price * owned * 100
         total_current_value += holding["value"]
