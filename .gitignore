@@ -2,3 +2,5 @@
 .env
 .vscode/settings.json
 holdings.json
+*.pyc
+requirements.txt
