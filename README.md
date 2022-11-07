@@ -4,17 +4,16 @@ Perintis (an inaccurate translation of Vanguard) is a tool to help your track an
 
 ## Installation instructions
 
-1. Install [Pipenv](https://pypi.org/project/pipenv/).
-2. Run `pipenv install`.
-3. Copy `.env.example` to `.env`.
-4. Log in to your Stockbit and brokerage account, then open browser console and run the following script. Copy the result to `.env`.
+1. Run `docker build -t perintis .`
+2. Copy `.env.example` to `.env`
+3. Log in to your Stockbit and brokerage account, then open browser console and run the following script. Copy the result to `.env`
 
 ```
 const token = localStorage.getItem("securitiesAccessToken");
 `STOCKBIT_TOKEN=${token}`;
 ```
 
-5. Optionally, if you have stocks in other broker, put them in a new file named `holdings.json` with this format:
+4. Optionally, if you have stocks in other broker, put them in a new file named `holdings.json` with this format:
 
 ```
 {
@@ -25,7 +24,7 @@ const token = localStorage.getItem("securitiesAccessToken");
 }
 ```
 
-6. Run `pipenv run streamlit run perintis.py`.
+5. Run `docker-compose up`
 
 ## FAQ
 

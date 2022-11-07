@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+    streamlit:
+        ports:
+            - 8501:8501
+        volumes:
+            - ./app:/app
+        image: perintis
