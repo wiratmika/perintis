@@ -13,9 +13,13 @@ def app():
 
     auto_buy(portfolio_result["stocks"])
 
+    df = pd.DataFrame(portfolio_result["stocks"])
+    df = df.set_index("Ticker")
+    df.loc["Total"] = df.sum(numeric_only=True)
+
     currency_format = "Rp{:,.0f}"
     st.dataframe(
-        pd.DataFrame(portfolio_result["stocks"])
+        df
         .style.format(
             {
                 "Price": "{:,}",
