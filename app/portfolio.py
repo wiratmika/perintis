@@ -9,7 +9,7 @@ def app():
     st.header("Portfolio")
 
     contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
-    portfolio_result = calculate("IDX30", contribution)
+    portfolio_result = calculate("IDXHIDIV20", contribution)
 
     auto_buy(portfolio_result["stocks"])
 
@@ -22,7 +22,10 @@ def app():
         df
         .style.format(
             {
-                "Price": "{:,}",
+                "Price": "{:,.0f}",
+                "Desired": "{:.0f}",
+                "Owned": "{:.0f}",
+                "Diff": "{:.0f}",
                 "Weight": "{:.2%}",
                 "Desired Value": currency_format,
                 "Owned Market Value": currency_format,

@@ -58,6 +58,8 @@ def scrape_stockbit_order(stockbit_token: str):
 
 
 @streamlit.cache
-def get_indices():
-    url = "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/idxhidiv20.json"
-    return {"IDX30": requests.get(url).json()}
+def get_indices(index):
+    indices_urls = {
+        "IDXHIDIV20": "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/idxhidiv20.json",
+    }
+    return requests.get(indices_urls[index]).json()

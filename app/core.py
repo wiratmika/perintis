@@ -63,7 +63,7 @@ def calculate(index: str, contribution: int):
     stocks = scrape_stocks()
 
     result = []
-    active_index = get_indices()[index]
+    active_index = get_indices(index)
     total_market_cap = get_total_market_cap(active_index)
     total_current_value = 0
 
