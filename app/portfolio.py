@@ -23,6 +23,8 @@ def app():
                 "Desired Value": currency_format,
                 "Owned Market Value": currency_format,
                 "Value Differences": currency_format,
+                "Dividend Yield": "{:.2%}",
+                "Expected Dividend": currency_format,
             }
         )
         .applymap(_diff_color, subset=["Diff", "Value Differences"]),

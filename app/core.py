@@ -89,6 +89,7 @@ def calculate(index: str, contribution: int):
         owned_value = price * owned * 100
         total_current_value += holding["value"]
         expected_value = lots * 100 * price
+        dividend_yield = stocks[ticker][3] / 100 if stocks[ticker][3] else 0
 
         result.append(
             {
@@ -102,6 +103,8 @@ def calculate(index: str, contribution: int):
                 "Desired Value": expected_value,
                 "Owned Market Value": owned_value,
                 "Value Differences": expected_value - owned_value,
+                "Dividend Yield": dividend_yield,
+                "Expected Dividend": owned_value * dividend_yield,
             }
         )
 
