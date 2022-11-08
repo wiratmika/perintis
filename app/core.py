@@ -94,7 +94,7 @@ def calculate(index: str, contribution: int):
         result.append(
             {
                 "Ticker": ticker,
-                "Name": stocks[ticker][0],
+                # "Name": stocks[ticker][0],
                 "Price": price,
                 "Desired": lots,
                 "Owned": owned,
@@ -103,6 +103,33 @@ def calculate(index: str, contribution: int):
                 "Desired Value": expected_value,
                 "Owned Market Value": owned_value,
                 "Value Differences": expected_value - owned_value,
+                "Dividend Yield": dividend_yield,
+                "Expected Dividend": owned_value * dividend_yield,
+            }
+        )
+
+    # Include non-index holdings in the result, but ignored for purchase
+    non_index_tickers = holdings.keys() - active_index.keys()
+    for ticker in non_index_tickers:
+        price = stocks[ticker][1]
+        holding = holdings[ticker]
+        owned = holding["shares"]
+        owned_value = price * owned * 100
+        total_current_value += holding["value"]
+        dividend_yield = stocks[ticker][3] / 100 if stocks[ticker][3] else 0
+
+        result.append(
+            {
+                "Ticker": ticker,
+                # "Name": stocks[ticker][0],
+                "Price": price,
+                "Desired": 0,
+                "Owned": owned,
+                "Diff": 0,
+                "Weight": 0,
+                "Desired Value": 0,
+                "Owned Market Value": owned_value,
+                "Value Differences": 0,
                 "Dividend Yield": dividend_yield,
                 "Expected Dividend": owned_value * dividend_yield,
             }
