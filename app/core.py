@@ -102,6 +102,7 @@ def calculate(index: str, contribution: int):
                 "Owned Market Value": owned_value,
                 "Value Differences": expected_value - owned_value,
                 "Dividend Yield": dividend_yield,
+                "Weighted Yield": dividend_yield * percentage,
                 "Expected Dividend": owned_value * dividend_yield,
             }
         )
@@ -128,6 +129,7 @@ def calculate(index: str, contribution: int):
                 "Owned Market Value": owned_value,
                 "Value Differences": 0,
                 "Dividend Yield": dividend_yield,
+                "Weighted Yield": dividend_yield * percentage,
                 "Expected Dividend": owned_value * dividend_yield,
             }
         )
@@ -135,21 +137,25 @@ def calculate(index: str, contribution: int):
     total_current_value = 0
     total_expected_value = 0
     capital_needed = 0
+    expected_dividend = 0
     for i in result:
         total_current_value += i["Owned Market Value"]
         total_expected_value += i["Desired Value"]
         capital_needed += i["Value Differences"] if i["Value Differences"] > 0 else 0
+        expected_dividend += i["Expected Dividend"]
 
     requires_stamp_duty = capital_needed > 10000000
     capital_needed *= 1.001  # 0.10% brokerage commission
     capital_needed += 10000 if requires_stamp_duty else 0
     capital_needed = ceil(capital_needed)
+    expected_dividend = floor(expected_dividend)
 
     return {
         "stocks": result,
         "total_current_value": total_current_value,
         "total_expected_value": total_expected_value,
         "capital_needed": capital_needed,
+        "expected_dividend": expected_dividend,
     }
 
 

@@ -15,7 +15,6 @@ def app():
 
     df = pd.DataFrame(portfolio_result["stocks"])
     df = df.set_index("Ticker")
-    df.loc["Total"] = df.sum(numeric_only=True)
 
     currency_format = "Rp{:,.0f}"
     st.dataframe(
@@ -63,6 +62,9 @@ def summary(portfolio_result):
     )
     st.sidebar.write(
         f"Additional capital required (including commission): **Rp{portfolio_result['capital_needed']:,}**"
+    )
+    st.sidebar.write(
+        f"Expected annual dividend income: **Rp{portfolio_result['expected_dividend']:,}**"
     )
 
 
