@@ -8,7 +8,7 @@ from core import calculate, get_stockbit_token
 def app():
     st.header("Portfolio")
 
-    contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=100000)
+    contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=1000000)
     portfolio_result = calculate("IDXHIDIV20", contribution)
 
     auto_buy(portfolio_result["stocks"])
