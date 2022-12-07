@@ -65,7 +65,6 @@ def calculate(index: str, contribution: int):
     result = []
     active_index = get_indices(index)
     total_market_cap = get_total_market_cap(active_index)
-    total_current_value = 0
 
     capital = get_portfolio_market_value(stocks, holdings) + contribution
 
@@ -87,7 +86,6 @@ def calculate(index: str, contribution: int):
         )
         owned = holding["shares"]
         owned_value = price * owned * 100
-        total_current_value += holding["value"]
         expected_value = lots * 100 * price
         dividend_yield = stocks[ticker][3] / 100 if stocks[ticker][3] else 0
 
@@ -115,7 +113,6 @@ def calculate(index: str, contribution: int):
         holding = holdings[ticker]
         owned = holding["shares"]
         owned_value = price * owned * 100
-        total_current_value += holding["value"]
         dividend_yield = stocks[ticker][3] / 100 if stocks[ticker][3] else 0
 
         result.append(
@@ -135,9 +132,11 @@ def calculate(index: str, contribution: int):
             }
         )
 
+    total_current_value = 0
     total_expected_value = 0
     capital_needed = 0
     for i in result:
+        total_current_value += i["Owned Market Value"]
         total_expected_value += i["Desired Value"]
         capital_needed += i["Value Differences"] if i["Value Differences"] > 0 else 0
 
