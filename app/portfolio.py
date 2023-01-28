@@ -15,6 +15,7 @@ def app():
 
     df = pd.DataFrame(portfolio_result["stocks"])
     df = df.set_index("Ticker")
+    df = df.sort_values(by=["Value Differences"], ascending=False)
 
     currency_format = "Rp{:,.0f}"
     st.dataframe(
@@ -30,7 +31,9 @@ def app():
                 "Owned Market Value": currency_format,
                 "Value Differences": currency_format,
                 "Dividend Yield": "{:.2%}",
+                "Weighted Yield": "{:.2%}",
                 "Expected Dividend": currency_format,
+                "P/E Ratio": "{:.2f}",
             }
         )
         .applymap(_diff_color, subset=["Diff", "Value Differences"]),
@@ -65,6 +68,9 @@ def summary(portfolio_result):
     )
     st.sidebar.write(
         f"Expected annual dividend income: **Rp{portfolio_result['expected_dividend']:,}**"
+    )
+    st.sidebar.write(
+        f"Average dividend yield: **{portfolio_result['average_yield']:.2%}**"
     )
 
 

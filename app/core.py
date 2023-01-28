@@ -104,6 +104,8 @@ def calculate(index: str, contribution: int):
                 "Dividend Yield": dividend_yield,
                 "Weighted Yield": dividend_yield * percentage,
                 "Expected Dividend": owned_value * dividend_yield,
+                "P/E Ratio": stocks[ticker][4],
+                "Sector": stocks[ticker][5],
             }
         )
 
@@ -131,6 +133,8 @@ def calculate(index: str, contribution: int):
                 "Dividend Yield": dividend_yield,
                 "Weighted Yield": dividend_yield * percentage,
                 "Expected Dividend": owned_value * dividend_yield,
+                "P/E Ratio": stocks[ticker][4],
+                "Sector": stocks[ticker][5],
             }
         )
 
@@ -149,6 +153,7 @@ def calculate(index: str, contribution: int):
     capital_needed += 10000 if requires_stamp_duty else 0
     capital_needed = ceil(capital_needed)
     expected_dividend = floor(expected_dividend)
+    average_yield = expected_dividend / total_current_value if total_current_value else 0
 
     return {
         "stocks": result,
@@ -156,6 +161,7 @@ def calculate(index: str, contribution: int):
         "total_expected_value": total_expected_value,
         "capital_needed": capital_needed,
         "expected_dividend": expected_dividend,
+        "average_yield": average_yield,
     }
 
 
