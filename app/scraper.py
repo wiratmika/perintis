@@ -1,8 +1,6 @@
-from datetime import datetime
-from typing import Tuple
-
 import requests
 import streamlit
+from bs4 import BeautifulSoup
 
 from exceptions import InvalidSessionException
 
@@ -59,10 +57,28 @@ def scrape_stockbit_order(stockbit_token: str):
     return response.json()["data"]
 
 
-@streamlit.cache
+@streamlit.cache_data
 def get_indices(index):
+    if index == "MSCI":
+        return scrape_msci()
+
     indices_urls = {
         "IDXHIDIV20": "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/idxhidiv20.json",
-        "MSCI": "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/msci.json"
     }
     return requests.get(indices_urls[index]).json()
+
+def scrape_msci():
+    html = requests.get("https://app2.msci.com/eqb/custom_indexes/indonesia_performance.html").text
+    soup = BeautifulSoup(html, "html.parser")
+    result = {}
+    for i in soup.find(id="D_constituents").table.tbody.find_all("tr"):
+        ticker = i.find_all("td")[10].text[:-3]
+        shares = int(i.find_all("td")[4].text.replace(",", ""))
+        price = int(i.find_all("td")[2].text.replace(".00000", ""))
+
+        result[ticker] = {
+            "shares": shares,
+            "price": price,
+        }
+
+    return result

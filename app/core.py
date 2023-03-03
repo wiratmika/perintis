@@ -87,7 +87,7 @@ def calculate(index: str, contribution: int, stockbit_token: str):
             {
                 "Ticker": ticker,
                 "Price": price,
-                "Average Price": None,
+                "Average Price": float("NaN"),
                 "Desired": lots,
                 "Owned": owned,
                 "Diff": lots - owned,
@@ -159,7 +159,6 @@ def calculate(index: str, contribution: int, stockbit_token: str):
     }
 
 
-@streamlit.cache
 def get_portfolio_market_value(stocks, holdings, active_index):
     total_value = 0
 

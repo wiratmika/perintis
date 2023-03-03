@@ -11,6 +11,7 @@ flake8 = "*"
 black = "*"
 requests = "*"
 watchdog = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.9"
