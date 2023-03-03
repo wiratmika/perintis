@@ -63,5 +63,6 @@ def scrape_stockbit_order(stockbit_token: str):
 def get_indices(index):
     indices_urls = {
         "IDXHIDIV20": "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/idxhidiv20.json",
+        "MSCI": "https://raw.githubusercontent.com/wiratmika/indonesia-stock-indices/main/msci.json"
     }
     return requests.get(indices_urls[index]).json()
