@@ -2,16 +2,19 @@ import pandas as pd
 import streamlit as st
 
 from holding import purchase_holdings
-from core import calculate, get_stockbit_token
+from core import calculate
 
 
 def app():
     st.header("Portfolio")
 
+    stockbit_token = st.sidebar.text_input("Stockbit token")
     contribution = st.sidebar.number_input("Top-up amount", value=1000000, step=1000000)
-    portfolio_result = calculate("IDXHIDIV20", contribution)
+    # TODO: ability to set desired index
+    portfolio_result = calculate("MSCI", contribution, stockbit_token)
 
-    auto_buy(portfolio_result["stocks"])
+    if stockbit_token:
+        auto_buy(portfolio_result["stocks"], stockbit_token)
 
     df = pd.DataFrame(portfolio_result["stocks"])
     df = df.set_index("Ticker")
@@ -43,13 +46,10 @@ def app():
     summary(portfolio_result)
 
 
-def auto_buy(portfolio_result):
-    stockbit_token = get_stockbit_token()
-    if not stockbit_token:
-        st.write("Auto-purchase is not available do to missing or invalid credentials")
-    elif st.button("Purchase according to recommended allocation"):
+def auto_buy(portfolio_result, stockbit_token):
+    if st.button("Purchase according to recommended allocation"):
         filtered_portfolio = filter(lambda x: x["Diff"] > 0, portfolio_result)
-        result = purchase_holdings(filtered_portfolio)
+        result = purchase_holdings(filtered_portfolio, stockbit_token)
         if result:
             for i in result:
                 st.write(i)

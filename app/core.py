@@ -1,7 +1,5 @@
 import os
 import json
-from collections import defaultdict
-from datetime import timedelta
 from math import ceil, floor
 
 import streamlit
@@ -14,8 +12,7 @@ from scraper import (
 )
 
 
-def get_holdings():
-    stockbit_token = get_stockbit_token()
+def get_holdings(stockbit_token):
     if not stockbit_token:
         return {}
 
@@ -58,8 +55,8 @@ def get_holdings():
     return result
 
 
-def calculate(index: str, contribution: int):
-    holdings = get_holdings()
+def calculate(index: str, contribution: int, stockbit_token: str):
+    holdings = get_holdings(stockbit_token)
     stocks = scrape_stocks()
 
     result = []
@@ -182,10 +179,6 @@ def get_total_market_cap(index):
         total_value += constituent["shares"] * constituent["price"]
 
     return total_value
-
-
-def get_stockbit_token():
-    return os.getenv("STOCKBIT_TOKEN")
 
 
 def get_local_holdings():

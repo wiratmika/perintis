@@ -2,14 +2,12 @@ import time
 
 import requests
 
-from core import get_stockbit_token
 
-
-def purchase_holdings(data):
+def purchase_holdings(data, stockbit_token):
     result = []
     for offset, datum in reversed(list(enumerate(data))):
         response = purchase_stockbit(
-            get_stockbit_token(),
+            stockbit_token,
             datum["Ticker"],
             datum["Diff"],
             datum["Price"],
