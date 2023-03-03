@@ -24,18 +24,16 @@ def get_holdings(stockbit_token):
     for datum in portfolio:
         result[datum["symbol"]] = {
             "shares": datum["balance_lot"],
-            "value": datum["total"],
+            "average_price": datum["price_average"],
         }
 
     for datum in open_orders:
         ticker = datum["symbol"]
         if ticker in result:
             result[ticker]["shares"] += datum["order_total"]
-            result[ticker]["value"] += datum["amount_invested"]
         else:
             result[ticker] = {
                 "shares": datum["order_total"],
-                "value": datum["amount_invested"],
             }
 
     local_data = get_local_holdings()
@@ -45,11 +43,11 @@ def get_holdings(stockbit_token):
     for ticker, holding in local_data.items():
         if ticker in result:
             result[ticker]["shares"] += holding["shares"]
-            result[ticker]["value"] += holding["value"]
+            result[ticker]["average_price"] = min(result[ticker]["average_price"], holding["average_price"])
         else:
             result[ticker] = {
                 "shares": holding["shares"],
-                "value": holding["value"],
+                "average_price": holding["average_price"],
             }
 
     return result
@@ -63,7 +61,7 @@ def calculate(index: str, contribution: int, stockbit_token: str):
     active_index = get_indices(index)
     total_market_cap = get_total_market_cap(active_index)
 
-    capital = get_portfolio_market_value(stocks, holdings) + contribution
+    capital = get_portfolio_market_value(stocks, holdings, active_index) + contribution
 
     for ticker in active_index.keys():
         price = stocks[ticker][1]
@@ -78,7 +76,6 @@ def calculate(index: str, contribution: int, stockbit_token: str):
             ticker,
             {
                 "shares": 0,
-                "value": 0,
             },
         )
         owned = holding["shares"]
@@ -89,8 +86,8 @@ def calculate(index: str, contribution: int, stockbit_token: str):
         result.append(
             {
                 "Ticker": ticker,
-                # "Name": stocks[ticker][0],
                 "Price": price,
+                "Average Price": None,
                 "Desired": lots,
                 "Owned": owned,
                 "Diff": lots - owned,
@@ -118,15 +115,15 @@ def calculate(index: str, contribution: int, stockbit_token: str):
         result.append(
             {
                 "Ticker": ticker,
-                # "Name": stocks[ticker][0],
                 "Price": price,
+                "Average Price": holding["average_price"] if "average_price" in holding else None,
                 "Desired": 0,
                 "Owned": owned,
                 "Diff": 0,
                 "Weight": 0,
                 "Desired Value": 0,
                 "Owned Market Value": owned_value,
-                "Value Differences": 0,
+                "Value Differences": -owned_value if "average_price" in holding and holding["average_price"] < price else 0,
                 "Dividend Yield": dividend_yield,
                 "Weighted Yield": dividend_yield * percentage,
                 "Expected Dividend": owned_value * dividend_yield,
@@ -163,12 +160,13 @@ def calculate(index: str, contribution: int, stockbit_token: str):
 
 
 @streamlit.cache
-def get_portfolio_market_value(stocks, holdings):
+def get_portfolio_market_value(stocks, holdings, active_index):
     total_value = 0
 
     for ticker, holding in holdings.items():
-        price = stocks[ticker][1]
-        total_value += holding["shares"] * 100 * price
+        if ticker in active_index:
+            price = stocks[ticker][1]
+            total_value += holding["shares"] * 100 * price
 
     return total_value
 

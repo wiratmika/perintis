@@ -18,7 +18,7 @@ def app():
 
     df = pd.DataFrame(portfolio_result["stocks"])
     df = df.set_index("Ticker")
-    df = df.sort_values(by=["Value Differences"], ascending=False)
+    df = df.sort_values(by=["Weight"], ascending=False)
 
     currency_format = "Rp{:,.0f}"
     st.dataframe(
@@ -26,6 +26,7 @@ def app():
         .style.format(
             {
                 "Price": "{:,.0f}",
+                "Average Price": "{:,.2f}",
                 "Desired": "{:.0f}",
                 "Owned": "{:.0f}",
                 "Diff": "{:.0f}",
