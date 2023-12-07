@@ -1,5 +1,7 @@
 # Perintis
 
+![Screenshot of Perintis](https://raw.githubusercontent.com/wiratmika/perintis/main/screenshot.png "Perintis")
+
 Perintis (an inaccurate Indonesian translation of [Vanguard](https://investor.vanguard.com/home), the inspiration for this work) is a tool to help you track, visualize, and purchase Indonesian stocks using market indices and their respective weighing mechanism. It works with [Stockbit](https://stockbit.com/) brokerage and is built with [Streamlit](https://streamlit.io/).
 
 ## Background
