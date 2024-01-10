@@ -6,7 +6,7 @@ Perintis (an inaccurate Indonesian translation of [Vanguard](https://investor.va
 
 ## Background
 
-Indonesian mutual funds are notorious for having comparatively high expense ratios. The author hypothesizes that Indonesian stock market liquidity and personal asset ownership (excluding primary residence) are relatively low compared to more developed countries. It leads to a lack of competition between the fund providers, where most products are sold by bank agents, wealth managers, and insurance plans instead of being sold directly to consumers.
+Indonesian mutual funds are notorious for having comparatively high expense ratios. I hypothesize that Indonesian stock market liquidity and personal asset ownership (excluding primary residence) are relatively low compared to more developed countries. It leads to a lack of competition between the fund providers, where most products are sold by bank agents, wealth managers, and insurance plans instead of being sold directly to consumers.
 
 For example, one of Indonesia's top stock mutual funds (by assets under management or AUM) costs 3.06% annually, while an index fund costs 1.57%. Conversely, highly-developed markets such as the United States offer physically-replicating funds for as low as 0.03%.
 
